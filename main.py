@@ -1,25 +1,42 @@
+import sys
 import pygame as pg
+from player import Player
 
 
 def main():
     pg.init()
-    size = W, H = 1200, 700  # list(map(int, input().split()))
+    size = W, H = 1000, 700  # list(map(int, input().split()))
     window = pg.display.set_mode(size)
     screen = pg.display.set_mode(size)
     screen.fill('black')
-    FPS = 20
+    FPS = 30
     clock = pg.time.Clock()
 
-    running = True
+    player = Player(screen)
 
+    running = True
+    moving = False
     while running:
-        screen.fill('black')
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                running = False
+                sys.exit()
+            if event.type == pg.KEYDOWN:
+                moving = True
+                if event.key == pg.K_LEFT:
+                    move = -10
+                if event.key == pg.K_RIGHT:
+                    move = 10
+            if event.type == pg.KEYUP:
+                moving = False
 
+        screen.fill('black')
+        if moving:
+            player.update(move=move)
+        else:
+            player.update()
         pg.display.flip()
         clock.tick(FPS)
+
 
 
 if __name__ == '__main__':
