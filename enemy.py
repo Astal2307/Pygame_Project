@@ -9,7 +9,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.direction = 1
+        self.direction = randrange(-1, 2, 2)
 
     def update(self, *args):
         self.rect.x += 200 / FPS * self.direction
