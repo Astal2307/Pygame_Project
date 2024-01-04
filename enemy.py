@@ -1,48 +1,74 @@
-import pygame
+import pygame as pg
 from random import *
+import time
 
 
-class Enemy(pygame.sprite.Sprite):
+class Enemy(pg.sprite.Sprite):
     def __init__(self, x, y, *args):
         super().__init__(*args)
-        self.image = load_image('enemy.png')
+        possible_colors = ['blue', 'green', 'red', 'yellow']
+        self.file_name = 'images/' + choice(possible_colors) + '.png'
+        self.image = pg.transform.scale((load_image(self.file_name)), (40, 30))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.direction = randrange(-1, 2, 2)
+        # self.direction = 1
 
-    def update(self, *args):
-        self.rect.x += 200 / FPS * self.direction
-        if self.rect.x < 0 or self.rect.x > width - self.image.get_width():
+    def update(self, all_direction, *args):
+        FPS = 30
+        self.rect.x += 100 / FPS * all_direction
+        """if self.rect.x < 0 or self.rect.x > width - self.image.get_width():
             self.direction *= -1
-            self.image = pygame.transform.flip(self.image, True, False)
+            self.image = pg.transform.flip(self.image, True, False)"""
+        # pg.draw.rect(screen, 'white', self.rect, 1)
+
+    def down(self):
+        self.rect.y += 100
 
 
 def load_image(filename):
-    return pygame.image.load(filename).convert_alpha()
+    return pg.image.load(filename).convert_alpha()
 
 
-pygame.init()
+"""pg.init()
 size = width, height = 500, 500
 
-screen = pygame.display.set_mode(size)
+screen = pg.display.set_mode(size)
 FPS = 30
-clock = pygame.time.Clock()
+clock = pg.time.Clock()
 running = True
-all_sprites = pygame.sprite.Group()
+all_sprites = pg.sprite.Group()
 
-for i in range(2):
-    sprite = Enemy(randint(0, 400), randint(10, 100))
-    all_sprites.add(sprite)
+all_direction = 1
 
+enemies = []
+
+for i in range(5):
+    for j in range(6):
+        sprite = Enemy(j * 75 + 1, i * 31)
+        all_sprites.add(sprite)
+        enemies.append(sprite)
+
+timer = time.time()
+a = 1
 while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
             running = False
-    all_sprites.update()
     screen.fill((49, 51, 53))
+
+    coords = [0 < i.rect.x < width - i.image.get_width() for i in enemies]
+
+    if not all(coords):
+        all_direction *= -1
+
+    if (int(time.time() - timer) + 1) % (30 * a) == 0:
+        a += 1
+        for i in enemies:
+            i.down()
+    all_sprites.update()
     all_sprites.draw(screen)
     clock.tick(FPS)
-    pygame.display.flip()
+    pg.display.flip()
 
-pygame.quit()
+pg.quit()"""
