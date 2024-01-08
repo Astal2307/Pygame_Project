@@ -103,9 +103,9 @@ def main():
             bullets.remove(i)"""
 
 
-def create_enemies(screen, ino):
-    """Creating enemies (will need Alien class)"""
-    pass
+"""def create_enemies(screen, ino):
+    # Creating enemies (will need Alien class)
+    pass"""
 
 
 if __name__ == '__main__':
