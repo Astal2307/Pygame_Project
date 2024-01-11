@@ -1,6 +1,7 @@
 import sys
 import pygame as pg
 import time
+from random import *
 
 from player import Player
 from bullet import Bullet
@@ -31,15 +32,30 @@ def main():
     all_direction = 1
 
     enemies = []
-
+    colors = {'blue': 0,
+              'green': 0,
+              'red': 0,
+              'yellow': 0}
     for i in range(8):
         for j in range(9):
-            sprite = Enemy(j * 75 + 1, i * 31)
+            sprite = Enemy(j * 75 + 1, i * 31, colors, screen)
+            colors[sprite.color] += 1
             all_sprites.add(sprite)
             enemies.append(sprite)
     timer = time.time()
     a = 1
+    b = 1
+    iteration = 0
     ##################################
+    explosion = pg.mixer.Sound('audio/boom.wav')
+    shoot = pg.mixer.Sound('audio/shoot.wav')
+    it1 = pg.mixer.Sound('audio/1.wav')
+    it2 = pg.mixer.Sound('audio/2.wav')
+    it3 = pg.mixer.Sound('audio/3.wav')
+    it4 = pg.mixer.Sound('audio/4.wav')
+    bg = pg.mixer.Sound('audio/bg.mp3')
+    ###################################
+    bg.play()
     bullet = None
     while running:
         for event in pg.event.get():
@@ -53,6 +69,7 @@ def main():
                     move = 10
                 if event.key == pg.K_SPACE:
                     if bullet is None:
+                        shoot.play()
                         bullet = Bullet(screen, player)
                     # bullets.append(bullet)
             if event.type == pg.KEYUP:
@@ -60,7 +77,14 @@ def main():
                 moving = False
 
         screen.blit(pg.transform.scale(pg.image.load('images/bg.png'), (1000, 750)), (0, 0))
-
+        if randint(1, 25) == 7:
+            rnd = randint(0, len(enemies))
+            for i in enemies:
+                if enemies.index(i) == rnd:
+                    i.create_bullet()
+        [i.update_bullet() for i in enemies]
+        if any([i.check_collide(player) for i in enemies]):
+            print('GAME_OVER_ENEMY')
         if bullet is not None:
             bullet.update()
             for enm in enemies:
@@ -68,6 +92,10 @@ def main():
                     bullet = None
                     enemies.remove(enm)
                     all_sprites.remove(enm)
+                    explosion.play()
+                    break
+                elif bullet.y < 0:
+                    bullet = None
                     break
         if moving:
             player.update(move=move)
@@ -76,7 +104,7 @@ def main():
 
         if any([i.rect.y > player.rect.y for i in enemies]):
             print('GAME_OVER')
-            break
+            #break
 
         ########################################
         coords = [0 < i.rect.x < W - i.image.get_width() for i in enemies]
@@ -88,6 +116,7 @@ def main():
             a += 1
             for i in enemies:
                 i.down()
+            iteration += 1
         all_sprites.update(all_direction)
         all_sprites.draw(screen)
         #########################################
@@ -103,9 +132,9 @@ def main():
             bullets.remove(i)"""
 
 
-"""def create_enemies(screen, ino):
-    # Creating enemies (will need Alien class)
-    pass"""
+def create_enemies(screen, ino):
+    """Creating enemies (will need Alien class)"""
+    pass
 
 
 if __name__ == '__main__':

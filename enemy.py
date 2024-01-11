@@ -4,14 +4,23 @@ import time
 
 
 class Enemy(pg.sprite.Sprite):
-    def __init__(self, x, y, *args):
+    def __init__(self, x, y, colors, scr, *args):
         super().__init__(*args)
         possible_colors = ['blue', 'green', 'red', 'yellow']
-        self.file_name = 'images/' + choice(possible_colors) + '.png'
+        if colors['blue'] >= 5:
+            possible_colors.remove('blue')
+
+        if colors['green'] >= 10:
+            possible_colors.remove('green')
+
+        self.screen = scr
+        self.color = choice(possible_colors)
+        self.file_name = 'images/' + self.color + '.png'
         self.image = pg.transform.scale((load_image(self.file_name)), (40, 30))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.bullet_rect = None
         # self.direction = 1
 
     def update(self, all_direction, *args):
@@ -21,6 +30,19 @@ class Enemy(pg.sprite.Sprite):
             self.direction *= -1
             self.image = pg.transform.flip(self.image, True, False)"""
         # pg.draw.rect(screen, 'white', self.rect, 1)
+
+    def create_bullet(self):
+        self.bullet_rect = pg.rect.Rect(self.rect.x + 21, self.rect.y + 24, 6, 10)
+
+    def update_bullet(self):
+        if self.bullet_rect is not None:
+            pg.draw.rect(self.screen, 'white', self.bullet_rect)
+            self.bullet_rect.y += 2
+
+    def check_collide(self, player):
+        if self.bullet_rect is not None:
+            return self.bullet_rect.colliderect(player.rect)
+        return False
 
     def down(self):
         self.rect.y += 100
