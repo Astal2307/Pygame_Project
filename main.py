@@ -2,8 +2,6 @@ import sys
 import pygame as pg
 import time
 from random import *
-
-import enemy
 from player import Player
 from bullet import Bullet
 from enemy import Enemy
@@ -99,7 +97,8 @@ def main():
                     i.create_bullet()
         [i.update_bullet() for i in enemies]
         if any([i.check_collide(player) for i in enemies]):
-            print('GAME_OVER_ENEMY')
+            bg.stop()
+            end_screen('game over', score)
         if bullet is not None:
             bullet.update()
             for enm in enemies:
@@ -119,6 +118,7 @@ def main():
             player.update()
 
         if any([i.rect.y > player.rect.y for i in enemies]):
+            bg.stop()
             end_screen('game over', score)
             # break
 
@@ -128,7 +128,7 @@ def main():
         if not all(coords):
             all_direction *= -1
 
-        if (int(time.time() - timer) + 1) % (5 * a) == 0:
+        if (int(time.time() - timer) + 1) % (20 * a) == 0:
             a += 1
             for i in enemies:
                 i.down()
@@ -137,6 +137,7 @@ def main():
         all_sprites.draw(screen)
         #########################################
         if len(enemies) == 0:
+            bg.stop()
             end_screen('', score)
 
         # remove_bullets(bullets)
@@ -267,8 +268,6 @@ def end_screen(event, score):
         rect.x = W // 2 - rect.width // 2
         rect.y = 500
         screen.blit(rendered, rect)
-
-
 
     while True:
         for event in pg.event.get():
